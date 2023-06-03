@@ -15,19 +15,26 @@ function createGalleryMarkup(galleryItems) {
 
 gallery.insertAdjacentHTML('beforeend', createGalleryMarkup(galleryItems));
 
-const onClick = (event) => {
+function onClick (event) {
     event.preventDefault();
     if (event.target.tagName !== "IMG") {
         return;
     }
-    
+
     const imageURL = event.target.dataset.source;
 
     const modal = basicLightbox.create(`<img src="${imageURL}">`);
 
     modal.element().querySelector('img').src = imageURL;
     
-    modal.show();
+    modal.show(() => { document.addEventListener('keydown', onKeyDown) });
+
+    function onKeyDown(event) {
+        if (event.key === "Escape") {
+            modal.close();
+            document.removeEventListener('keydown', onKeyDown);
+        }
+    }
 }
 
 gallery.addEventListener('click', onClick);
